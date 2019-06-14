@@ -1,7 +1,13 @@
-import babel from 'rollup-plugin-babel'
-import resolve from 'rollup-plugin-node-resolve'
-import rollupTypescript from 'rollup-plugin-typescript2'
-import minify from 'rollup-plugin-babel-minify'
+import nodeResolve from 'rollup-plugin-node-resolve'
+import commonJs from 'rollup-plugin-commonjs'
+import typeScript from 'rollup-plugin-typescript2'
+import html from 'rollup-plugin-html'
+import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
+import { terser } from 'rollup-plugin-terser'
+import scss from 'rollup-plugin-scss'
+import autoprefixer from 'autoprefixer'
+import postcss from 'rollup-plugin-postcss-modules'
+import globals from 'rollup-plugin-node-globals'
 
 import pkg from './package.json'
 
@@ -13,20 +19,24 @@ export default {
       format: 'cjs',
     },
   ],
-  external: [
-    ...Object.keys(pkg.dependencies || {}),
-    ...Object.keys(pkg.peerDependencies || {}),
-  ],
   plugins: [
-    resolve({
-      jsnext: true,
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    nodeResolve({
+      browser: false,
+      main: true,
     }),
-    babel({
-      exclude: 'node_modules/**',
-      extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    commonJs(),
+    scss(),
+    postcss({
+      extract: true,
+      plugins: [autoprefixer()],
+      writeDefinitions: false,
     }),
-    rollupTypescript(),
-    minify(),
+    html(),
+    typeScript({
+      // tsconfig: 'tsconfig.json',
+    }),
+    sizeSnapshot(),
+    terser(),
+    globals(),
   ],
 }
