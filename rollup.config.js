@@ -1,39 +1,32 @@
-import pkg from './package.json'
-import resolve from 'rollup-plugin-node-resolve'
 import babel from 'rollup-plugin-babel'
-import commonjs from 'rollup-plugin-commonjs'
-import globals from 'rollup-plugin-node-globals'
-import { uglify } from 'rollup-plugin-uglify'
-import builtins from 'rollup-plugin-node-builtins'
+import resolve from 'rollup-plugin-node-resolve'
+import rollupTypescript from 'rollup-plugin-typescript2'
+import minify from 'rollup-plugin-babel-minify'
+
+import pkg from './package.json'
 
 export default {
   input: 'src/index.ts',
   output: [
     {
       file: pkg.main,
-      format: 'cjs'
-    }
+      format: 'cjs',
+    },
   ],
   external: [
-    ...Object.keys(pkg.dependencies || {})
+    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.peerDependencies || {}),
   ],
   plugins: [
     resolve({
-      preferBuiltins: false
+      jsnext: true,
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     }),
     babel({
-      babelrc: true,
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
+      extensions: ['.js', '.jsx', '.ts', '.tsx'],
     }),
-    uglify({
-      output: {
-        comments: 'all'
-      }
-    }),
-    commonjs({
-      extensions: ['.js', '.ts']
-    }),
-    globals(),
-    builtins()
-  ]
+    rollupTypescript(),
+    minify(),
+  ],
 }
