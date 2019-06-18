@@ -1,42 +1,30 @@
+import babel from 'rollup-plugin-babel'
 import nodeResolve from 'rollup-plugin-node-resolve'
-import commonJs from 'rollup-plugin-commonjs'
-import typeScript from 'rollup-plugin-typescript2'
-import html from 'rollup-plugin-html'
-import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
-import { terser } from 'rollup-plugin-terser'
-import scss from 'rollup-plugin-scss'
-import autoprefixer from 'autoprefixer'
-import postcss from 'rollup-plugin-postcss-modules'
+import commonjs from 'rollup-plugin-commonjs'
 import globals from 'rollup-plugin-node-globals'
+import builtins from 'rollup-plugin-node-builtins'
+import minify from 'rollup-plugin-babel-minify'
 
 import pkg from './package.json'
 
 export default {
-  input: 'src/index.ts',
+  input: 'src/cookie.js',
   output: [
     {
+      name: 'Cookie',
       file: pkg.main,
-      format: 'cjs',
+      format: 'umd',
     },
   ],
   plugins: [
     nodeResolve({
-      browser: false,
-      main: true,
+      mainFields: ['jsnext'],
+      browser: true
     }),
-    commonJs(),
-    scss(),
-    postcss({
-      extract: true,
-      plugins: [autoprefixer()],
-      writeDefinitions: false,
-    }),
-    html(),
-    typeScript({
-      // tsconfig: 'tsconfig.json',
-    }),
-    sizeSnapshot(),
-    terser(),
+    commonjs(),
+    babel(),
+    minify(),
     globals(),
+    builtins(),
   ],
 }
