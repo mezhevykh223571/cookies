@@ -54,7 +54,7 @@ Cookie.prototype = {
   },
   remove: function (name, path, domain) {
     if (this.get(name)) {
-      document.cookie = name + '=' + ((path) ? ';path=' + path : '') + ((domain) ? ';domain=' + domain : '') + ';expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      document.cookie = name + '=' + ((path) ? ';path=' + path : '') + ((domain) ? ';domain=' + domain : '') + '; expires=Thu, 01 Jan 1970 00:00:00 GMT'
     }
   },
   all: function () {
@@ -89,9 +89,9 @@ const cookie = function (name, value, options) {
     return _Cookie.all()
   }
 
-  // if (argm.length === 1 && name === null) {
-  //   return _Cookie.remove()
-  // }
+  if (argm.length === 1 && name === null) {
+    return _Cookie.remove()
+  }
 
   if (argm.length === 2 && !value) {
     console.log(123)
